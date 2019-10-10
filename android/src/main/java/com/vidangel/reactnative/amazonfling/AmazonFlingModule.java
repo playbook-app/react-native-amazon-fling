@@ -18,6 +18,7 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule {
         super(reactContext);
         this.reactContext = reactContext;
         mController = new DiscoveryController(reactContext);
+        mController.start("amzn.thin.pl", mDiscovery);
 
     }
 
