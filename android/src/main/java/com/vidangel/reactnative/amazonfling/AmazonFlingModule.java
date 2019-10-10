@@ -38,7 +38,7 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
         Log.e("jedsearch", "AmazonFlingModule");
         this.reactContext = reactContext;
         reactContext.addLifecycleEventListener(this);
-        mController = new DiscoveryController(reactContext.getApplicationContext());
+        mController = new DiscoveryController(reactContext.getCurrentActivity());
 //        mController = new DiscoveryController(reactContext);
 //        mController.start("amzn.thin.pl", mDiscovery);
 
@@ -50,9 +50,9 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
         Log.e("jedsearch", "jedsearch");
 
         Log.e("jedsearch", "jedsearch1");
-        mController = new DiscoveryController(reactContext.getApplicationContext());
+//        mController = new DiscoveryController(reactContext.getApplicationContext());
         Log.e("jedsearch", "jedsearch2");
-        mController.start("amzn.thin.pl", mDiscovery);
+//        mController.start("amzn.thin.pl", mDiscovery);
     }
 
     @Override
