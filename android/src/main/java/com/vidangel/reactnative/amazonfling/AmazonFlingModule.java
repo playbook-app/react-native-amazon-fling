@@ -14,16 +14,6 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
 
     private final ReactApplicationContext reactContext;
 
-    public AmazonFlingModule(ReactApplicationContext reactContext) {
-        super(reactContext);
-        this.reactContext = reactContext;
-        reactContext.addLifecycleEventListener(this);
-        mController = new DiscoveryController(reactContext.getApplicationContext());
-//        mController = new DiscoveryController(reactContext);
-//        mController.start("amzn.thin.pl", mDiscovery);
-
-    }
-
     private DiscoveryController mController;
 
     private DiscoveryController.IDiscoveryListener mDiscovery = new DiscoveryController.IDiscoveryListener() {
@@ -42,6 +32,17 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
             Log.e("jedtest", "jed3");
         }
     };
+
+    public AmazonFlingModule(ReactApplicationContext reactContext) {
+        super(reactContext);
+        Log.e("jedsearch", "AmazonFlingModule");
+        this.reactContext = reactContext;
+        reactContext.addLifecycleEventListener(this);
+        mController = new DiscoveryController(reactContext.getApplicationContext());
+//        mController = new DiscoveryController(reactContext);
+//        mController.start("amzn.thin.pl", mDiscovery);
+
+    }
 
     @ReactMethod
     public void search() {
@@ -68,11 +69,13 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
 
     @Override
     public void onHostResume() {
+        Log.e("jedsearch", "onHostResume");
         mController.start("amzn.thin.pl", mDiscovery);
     }
 
     @Override
     public void onHostPause() {
+        Log.e("jedsearch", "onHostPause");
         mController.stop();
     }
 
