@@ -11,20 +11,40 @@ import com.facebook.react.bridge.Callback;
 
 public class AmazonFlingModule extends ReactContextBaseJavaModule {
 
-    private DiscoveryController mController;
     private final ReactApplicationContext reactContext;
 
     public AmazonFlingModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-        mController = new DiscoveryController(reactContext);
-        mController.start("amzn.thin.pl", mDiscovery);
+//        mController = new DiscoveryController(reactContext);
+//        mController.start("amzn.thin.pl", mDiscovery);
 
     }
     @ReactMethod
     public void search() {
         Log.e("jedsearch", "jedsearch");
+        DiscoveryController mController;
+        DiscoveryController.IDiscoveryListener mDiscovery = new DiscoveryController.IDiscoveryListener() {
+            @Override
+            public void playerDiscovered(RemoteMediaPlayer player) {
+                Log.e("jedsearch", "playerDiscovered");
+                Log.e("jed", "playerDiscovered" + player.toString());
+                //add media player to the application’s player list.
+            }
+            @Override
+            public void playerLost(RemoteMediaPlayer player) {
+                Log.e("jedsearch", "playerLost");
+                Log.e("jed", "playerLost" + player.toString());
+                //remove media player from the application’s player list.
+            }
+            @Override
+            public void discoveryFailure() {
+                Log.e("jed", "discoveryFailure");
+            }
+        };
+        Log.e("jedsearch", "jedsearch1");
         mController = new DiscoveryController(reactContext);
+        Log.e("jedsearch", "jedsearch2");
         mController.start("amzn.thin.pl", mDiscovery);
     }
 
@@ -39,20 +59,5 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule {
         callback.invoke("Received numberArgument: " + numberArgument + " stringArgument: " + stringArgument);
     }
 
-    private DiscoveryController.IDiscoveryListener mDiscovery = new DiscoveryController.IDiscoveryListener() {
-        @Override
-        public void playerDiscovered(RemoteMediaPlayer player) {
-            Log.e("jed", "playerDiscovered" + player.toString());
-            //add media player to the application’s player list.
-        }
-        @Override
-        public void playerLost(RemoteMediaPlayer player) {
-            Log.e("jed", "playerLost" + player.toString());
-            //remove media player from the application’s player list.
-        }
-        @Override
-        public void discoveryFailure() {
-            Log.e("jed", "discoveryFailure");
-        }
-    };
+
 }
