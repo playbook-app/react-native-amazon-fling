@@ -43,7 +43,7 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule {
             }
         };
         Log.e("jedsearch", "jedsearch1");
-        mController = new DiscoveryController(reactContext);
+        mController = new DiscoveryController(reactContext.getApplicationContext());
         Log.e("jedsearch", "jedsearch2");
         mController.start("amzn.thin.pl", mDiscovery);
     }
