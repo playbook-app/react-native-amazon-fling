@@ -16,29 +16,11 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
 
     private DiscoveryController mController;
 
-    private DiscoveryController.IDiscoveryListener mDiscovery = new DiscoveryController.IDiscoveryListener() {
-        @Override
-        public void playerDiscovered(RemoteMediaPlayer player) {
-            Log.e("jedtest", "jed1" + player.toString());
-            //add media player to the application’s player list.
-        }
-        @Override
-        public void playerLost(RemoteMediaPlayer player) {
-            Log.e("jedtest", "jed2");
-            //remove media player from the application’s player list.
-        }
-        @Override
-        public void discoveryFailure() {
-            Log.e("jedtest", "jed3");
-        }
-    };
-
     public AmazonFlingModule(ReactApplicationContext reactContext) {
         super(reactContext);
         Log.e("jedsearch", "AmazonFlingModule");
         this.reactContext = reactContext;
         reactContext.addLifecycleEventListener(this);
-        mController = new DiscoveryController(reactContext.getBaseContext());
 //        mController = new DiscoveryController(reactContext);
 //        mController.start("amzn.thin.pl", mDiscovery);
 
@@ -71,6 +53,22 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
     public void onHostResume() {
         Log.e("jedsearch", "onHostResume");
         mController = new DiscoveryController(reactContext.getBaseContext());
+        DiscoveryController.IDiscoveryListener mDiscovery = new DiscoveryController.IDiscoveryListener() {
+            @Override
+            public void playerDiscovered(RemoteMediaPlayer player) {
+                Log.e("jedtest", "jed1" + player.toString());
+                //add media player to the application’s player list.
+            }
+            @Override
+            public void playerLost(RemoteMediaPlayer player) {
+                Log.e("jedtest", "jed2");
+                //remove media player from the application’s player list.
+            }
+            @Override
+            public void discoveryFailure() {
+                Log.e("jedtest", "jed3");
+            }
+        };
         mController.start("amzn.thin.pl", mDiscovery);
     }
 
