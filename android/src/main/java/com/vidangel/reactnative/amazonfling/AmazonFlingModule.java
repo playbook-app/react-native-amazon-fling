@@ -53,6 +53,7 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
         Log.e("jedsearch", "AmazonFlingModule5599");
         this.reactContext = reactContext;
         reactContext.addLifecycleEventListener(this);
+        mController = new DiscoveryController(reactContext.getBaseContext());
 //        mController = new DiscoveryController(reactContext);
 //        mController.start("amzn.thin.pl", mDiscovery);
 
@@ -60,20 +61,13 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
 
     @ReactMethod
     public void startSearch() {
-        Log.e("jedsearch55", "jedsearch00");
-        mController = new DiscoveryController(reactContext.getBaseContext());
+        Log.e("jedsearch55", "startSearch");
         mController.start("amzn.thin.pl", mDiscovery);
-        Log.e("jedsearch55", "jedsearch");
-
-        Log.e("jedsearch55", "jedsearch1");
-//        mController = new DiscoveryController(reactContext.getApplicationContext());
-        Log.e("jedsearch55", "jedsearch2");
-//        mController.start("amzn.thin.pl", mDiscovery);
     }
 
     @ReactMethod
     public void stopSearch() {
-        Log.e("jedsearch", "stop");
+        Log.e("jedsearch", "stopSearch");
         mController.stop();
     }
 
@@ -97,28 +91,41 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
 
     public void updateDeviceList(RemoteMediaPlayer device){
         Log.e("jedsearch55", "updateDeviceList");
+        if (mDeviceList.contains(device)) {
+            mDeviceList.remove(device);
+        }
         mDeviceList.add(device);
         String jsonInString = new Gson().toJson(mDeviceList);
         WritableMap params = Arguments.createMap();
         params.putString("devices", jsonInString);
+        Log.e("devices json", jsonInString);
         sendEvent("device_list", params);
     }
 
     private void sendEvent(String eventName, WritableMap params) {
-        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
+        this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
     }
 
     @ReactMethod
-    private void fling(final RemoteMediaPlayer target, final String name, final String title) {
-//        initializeFling(target);
-        Log.i("jed", "try setPositionUpdateInterval: " + MONITOR_INTERVAL);
-        target.setPositionUpdateInterval(MONITOR_INTERVAL).getAsync(
-                new ErrorResultHandler("setPositionUpdateInterval",
-                        "Error attempting set update interval, ignoring", true));
-        Log.i("jed", "try setMediaSource: url - " + name + " title - " + title);
-        target.setMediaSource(name, title, true, false).getAsync(
-                new ErrorResultHandler("setMediaSource", "Error attempting to Play:", true));
-//        showToast("try Flinging...");
+    private void fling(final String targetUuid, final String name, final String title) {
+        RemoteMediaPlayer target = null;
+        for (RemoteMediaPlayer device : mDeviceList) {
+            Log.e("Jed", device.toString());
+            if (device.getUniqueIdentifier().equals(targetUuid)){
+                target = device;
+                Log.e("Jed found device", device.toString());
+            }
+        }
+        Log.e("jed fling device", target.toString());
+        if (target != null){
+            Log.i("jed", "try setPositionUpdateInterval: " + MONITOR_INTERVAL);
+            target.setPositionUpdateInterval(MONITOR_INTERVAL).getAsync(
+                    new ErrorResultHandler("setPositionUpdateInterval",
+                            "Error attempting set update interval, ignoring", true));
+            Log.i("jed", "try setMediaSource: url - " + name + " title - " + title);
+            target.setMediaSource(name, title, true, false).getAsync(
+                    new ErrorResultHandler("setMediaSource", "Error attempting to Play:", true));
+        }
     }
 
 //    private void showToast(final String msg) {

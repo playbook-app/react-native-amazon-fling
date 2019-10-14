@@ -1,14 +1,29 @@
-import { NativeEventEmitter, NativeModules } from 'react-native';
+import { NativeEventEmitter, NativeModules } from 'react-native'
 
-const { AmazonFling } = NativeModules;
+const { AmazonFling } = NativeModules
 
-const eventEmitter = new NativeEventEmitter(AmazonFling);
+const eventEmitter = new NativeEventEmitter( AmazonFling )
+
 
 const listenEvents = () => {
-  eventEmitter.addListener('device_list', (event) => {
-    console.log('event: device_list', event)
-  })
+
+}
+module.exports = {
+  findFireDevices () {
+    AmazonFling.startSearch()
+  },
+  stopFindFireDevices () {
+    AmazonFling.stopSearch()
+  },
+  addDeviceListener ( cb ) {
+    eventEmitter.addListener( 'device_list', ( event ) => {
+      console.log( 'event: device_list', event )
+      cb( event )
+    } )
+  },
+  fling ( target, url, title ) {
+    AmazonFling.fling( target, url, title )
+  }
 }
 
 
-export default AmazonFling;
