@@ -23,6 +23,15 @@ module.exports = {
   },
   fling ( target, url, title ) {
     AmazonFling.fling( target, url, title )
+  },
+  flingPause ( target ) {
+    AmazonFling.doPause(target)
+  },
+  flingPlay ( target ) {
+    AmazonFling.doPlay(target)
+  },
+  flingStop ( target ) {
+    AmazonFling.doStop(target)
   }
 }
 

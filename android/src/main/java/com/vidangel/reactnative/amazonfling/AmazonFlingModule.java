@@ -27,10 +27,12 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
 
     private DiscoveryController mController;
 
+    final String TAG = "AmazonFlingModule";
+
     private DiscoveryController.IDiscoveryListener mDiscovery = new DiscoveryController.IDiscoveryListener() {
         @Override
         public void playerDiscovered(RemoteMediaPlayer player) {
-            Log.e("jedtest", "playerDiscovered" + player.toString());
+            Log.v(TAG, "playerDiscovered" + player.toString());
 //                fling(player, "https://video.thechosen.tv/The_Chosen_S01E01_patch50219.m3u8", "Episode 1");
             //add media player to the application’s player list.
             updateDeviceList(player);
@@ -38,19 +40,19 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
 
         @Override
         public void playerLost(RemoteMediaPlayer player) {
-            Log.e("jedtest", "jed2");
+            Log.v(TAG, "jed2");
             //remove media player from the application’s player list.
         }
 
         @Override
         public void discoveryFailure() {
-            Log.e("jedtest", "jed3");
+            Log.v(TAG, "jed3");
         }
     };
 
     public AmazonFlingModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        Log.e("jedsearch", "AmazonFlingModule5599");
+        Log.v(TAG, "AmazonFlingModule5599");
         this.reactContext = reactContext;
         reactContext.addLifecycleEventListener(this);
         mController = new DiscoveryController(reactContext.getBaseContext());
@@ -61,13 +63,13 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
 
     @ReactMethod
     public void startSearch() {
-        Log.e("jedsearch55", "startSearch");
+        Log.v(TAG, "startSearch");
         mController.start("amzn.thin.pl", mDiscovery);
     }
 
     @ReactMethod
     public void stopSearch() {
-        Log.e("jedsearch", "stopSearch");
+        Log.v(TAG, "stopSearch");
         mController.stop();
     }
 
@@ -78,19 +80,13 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
 
     @ReactMethod
     public void sampleMethod(String stringArgument, int numberArgument, Callback callback) {
-        Log.e("jedsearch", "sampleMethod");
+        Log.v(TAG, "sampleMethod");
         // TODO: Implement some actually useful functionality
         callback.invoke("Received numberArgument: " + numberArgument + " stringArgument: " + stringArgument);
     }
 
-    @ReactMethod
-    public void test() {
-        Log.e("jedsearch", "test");
-        // TODO: Implement some actually useful functionality
-    }
-
-    public void updateDeviceList(RemoteMediaPlayer device){
-        Log.e("jedsearch55", "updateDeviceList");
+    public void updateDeviceList(RemoteMediaPlayer device) {
+        Log.v(TAG, "updateDeviceList");
         if (mDeviceList.contains(device)) {
             mDeviceList.remove(device);
         }
@@ -98,7 +94,7 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
         String jsonInString = new Gson().toJson(mDeviceList);
         WritableMap params = Arguments.createMap();
         params.putString("devices", jsonInString);
-        Log.e("devices json", jsonInString);
+        Log.v(TAG, jsonInString);
         sendEvent("device_list", params);
     }
 
@@ -106,36 +102,60 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
         this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
     }
 
-    @ReactMethod
-    private void fling(final String targetUuid, final String name, final String title) {
+    private RemoteMediaPlayer getRemoteMediaPlayerFromUUID(String targetUuid) {
         RemoteMediaPlayer target = null;
         for (RemoteMediaPlayer device : mDeviceList) {
-            Log.e("Jed", device.toString());
-            if (device.getUniqueIdentifier().equals(targetUuid)){
+            Log.v(TAG, device.toString());
+            if (device.getUniqueIdentifier().equals(targetUuid)) {
                 target = device;
-                Log.e("Jed found device", device.toString());
+                Log.v(TAG, device.toString());
             }
         }
-        Log.e("jed fling device", target.toString());
-        if (target != null){
-            Log.i("jed", "try setPositionUpdateInterval: " + MONITOR_INTERVAL);
+        return target;
+    }
+
+    @ReactMethod
+    private void fling(final String targetUuid, final String name, final String title) {
+        RemoteMediaPlayer target = getRemoteMediaPlayerFromUUID(targetUuid);
+
+        Log.v(TAG, target.toString());
+        if (target != null) {
+            Log.i(TAG, "try setPositionUpdateInterval: " + MONITOR_INTERVAL);
             target.setPositionUpdateInterval(MONITOR_INTERVAL).getAsync(
                     new ErrorResultHandler("setPositionUpdateInterval",
                             "Error attempting set update interval, ignoring", true));
-            Log.i("jed", "try setMediaSource: url - " + name + " title - " + title);
+            Log.i(TAG, "try setMediaSource: url - " + name + " title - " + title);
             target.setMediaSource(name, title, true, false).getAsync(
                     new ErrorResultHandler("setMediaSource", "Error attempting to Play:", true));
         }
     }
 
-//    private void showToast(final String msg) {
-//        runOnUiThread(new Runnable() {
-//            public void run() {
-//                Toast toast = Toast.makeText(reactContext.getApplicationContext(), msg, Toast.LENGTH_SHORT);
-//                toast.show();
-//            }
-//        });
-//    }
+    @ReactMethod
+    private void doPlay(final String targetUuid) {
+        RemoteMediaPlayer target = getRemoteMediaPlayerFromUUID(targetUuid);
+        if (target != null) {
+            Log.i(TAG, "try doPlay...");
+            target.play().getAsync(new ErrorResultHandler("doPlay", "Error Playing"));
+        }
+    }
+
+    @ReactMethod
+    private void doPause(final String targetUuid) {
+        RemoteMediaPlayer target = getRemoteMediaPlayerFromUUID(targetUuid);
+        if (target != null) {
+            Log.i(TAG, "try doPause...");
+            target.pause().getAsync(new ErrorResultHandler("doPause", "Error Pausing"));
+        }
+    }
+
+    @ReactMethod
+    private void doStop(final String targetUuid) {
+        RemoteMediaPlayer target = getRemoteMediaPlayerFromUUID(targetUuid);
+        if (target != null) {
+            Log.i(TAG, "try doStop...");
+            target.stop().getAsync(new ErrorResultHandler("doStop", "Error Stopping"));
+        }
+    }
 
     private class ErrorResultHandler implements RemoteMediaPlayer.FutureListener<Void> {
         private String mCommand;
@@ -158,7 +178,7 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
                 result.get();
 //                showToast(mCommand);
 //                mErrorCount = 0;
-                Log.i("jed", mCommand + ": successful");
+                Log.i(TAG, mCommand + ": successful");
             } catch (ExecutionException e) {
 //                handleFailure(e.getCause(), mMsg, mExtend);
             } catch (Exception e) {
