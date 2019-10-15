@@ -8,7 +8,6 @@ import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.Callback;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
@@ -33,7 +32,6 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
         @Override
         public void playerDiscovered(RemoteMediaPlayer player) {
             Log.v(TAG, "playerDiscovered" + player.toString());
-//                fling(player, "https://video.thechosen.tv/The_Chosen_S01E01_patch50219.m3u8", "Episode 1");
             //add media player to the application’s player list.
             updateDeviceList(player);
         }
@@ -56,9 +54,6 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
         this.reactContext = reactContext;
         reactContext.addLifecycleEventListener(this);
         mController = new DiscoveryController(reactContext.getBaseContext());
-//        mController = new DiscoveryController(reactContext);
-//        mController.start("amzn.thin.pl", mDiscovery);
-
     }
 
     @ReactMethod
@@ -76,13 +71,6 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
     @Override
     public String getName() {
         return "AmazonFling";
-    }
-
-    @ReactMethod
-    public void sampleMethod(String stringArgument, int numberArgument, Callback callback) {
-        Log.v(TAG, "sampleMethod");
-        // TODO: Implement some actually useful functionality
-        callback.invoke("Received numberArgument: " + numberArgument + " stringArgument: " + stringArgument);
     }
 
     public void updateDeviceList(RemoteMediaPlayer device) {
