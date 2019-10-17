@@ -11,7 +11,10 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
-import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -79,10 +82,22 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
             mDeviceList.remove(device);
         }
         mDeviceList.add(device);
-        String jsonInString = new Gson().toJson(mDeviceList);
+        JSONArray arrOfDevices = new JSONArray();
+        for (RemoteMediaPlayer dev : mDeviceList) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("name", dev.getName());
+                json.put("uuid", dev.getUniqueIdentifier());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            arrOfDevices.put(json);
+        }
+
+
         WritableMap params = Arguments.createMap();
-        params.putString("devices", jsonInString);
-        Log.v(TAG, jsonInString);
+        params.putString("devices", arrOfDevices.toString());
+        Log.v(TAG, arrOfDevices.toString());
         sendEvent("device_list", params);
     }
 
