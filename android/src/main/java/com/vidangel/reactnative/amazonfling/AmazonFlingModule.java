@@ -192,7 +192,8 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
 
     @Override
     public void onHostDestroy() {
-        stopSearch();
+        //do nothing
+//        stopSearch();
     }
 
     @Override
