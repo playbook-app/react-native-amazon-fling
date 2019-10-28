@@ -68,7 +68,10 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
     @ReactMethod
     public void stopSearch() {
         Log.v(TAG, "stopSearch");
-        mController.stop();
+        if (mController != null){
+            mController.stop();
+        }
+
     }
 
     @Override
