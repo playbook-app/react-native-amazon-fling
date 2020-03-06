@@ -32,6 +32,10 @@ module.exports = {
   },
   flingStop ( target ) {
     AmazonFling.doStop(target)
+  },
+  flingSeek ( target, position ) {
+    // Note, position must be a string for now. RN can't handle other argument types
+    AmazonFling.doSeek(target, position)
   }
 }
 

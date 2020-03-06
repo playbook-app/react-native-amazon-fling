@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.amazon.whisperplay.fling.media.controller.DiscoveryController;
 import com.amazon.whisperplay.fling.media.controller.RemoteMediaPlayer;
+import com.amazon.whisperplay.fling.media.service.CustomMediaPlayer;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -163,6 +164,16 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
         }
     }
 
+    @ReactMethod
+    private void doSeek(final String targetUuid, final String position) {
+        RemoteMediaPlayer target = getRemoteMediaPlayerFromUUID(targetUuid);
+        if (target != null) {
+            Log.i(TAG, "try doSeek...");
+            long positionLong = Long.parseLong(position);
+            target.seek(CustomMediaPlayer.PlayerSeekMode.Absolute, positionLong).getAsync(new ErrorResultHandler("doStop", "Error Stopping"));
+        }
+    }
+
     private class ErrorResultHandler implements RemoteMediaPlayer.FutureListener<Void> {
         private String mCommand;
         private String mMsg;
@@ -202,7 +213,6 @@ public class AmazonFlingModule extends ReactContextBaseJavaModule implements Lif
     @Override
     public void onHostResume() {
         //do nothing
-
     }
 
     @Override
